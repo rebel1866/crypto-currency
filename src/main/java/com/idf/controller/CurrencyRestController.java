@@ -30,9 +30,4 @@ public class CurrencyRestController {
     public CurrencyPriceDto getCurrencyById(@PathVariable("id") int id) {
         return currencyLogic.findCurrencyById(id);
     }
-
-    @GetMapping(value = "/test", produces = {"application/json"})
-    public List<CurrencyPriceDto> update() {
-        return currencyLogic.updateCurrencyPrices();
-    }
 }

@@ -11,9 +11,11 @@ import com.idf.service.dto.CurrencyPriceDto;
 import com.idf.service.dtoconverter.CurrencyEntityToDtoConverter;
 import com.idf.service.dtoconverter.CurrencyEntityToPriceDtoConverter;
 import com.idf.service.logic.CurrencyLogic;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,12 +69,10 @@ public class CurrencyLogicImpl implements CurrencyLogic {
     }
 
     public double getRelevantPriceById(int id) {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url("https://api.coinlore.net/api/ticker/?id=" + id).build();
         String json;
-        try {
-            Response response = client.newCall(request).execute();
-            json = response.body().string();
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet request = new HttpGet("https://api.coinlore.net/api/ticker/?id=" + id);
+            json = client.execute(request, httpResponse -> EntityUtils.toString(httpResponse.getEntity()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
