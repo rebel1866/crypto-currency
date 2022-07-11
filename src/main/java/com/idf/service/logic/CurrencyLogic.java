@@ -9,4 +9,6 @@ public interface CurrencyLogic {
     List<CurrencyDto> findAllCurrencies();
 
     CurrencyPriceDto findCurrencyById(int id);
+
+    List<CurrencyPriceDto> updateCurrencyPrices();
 }

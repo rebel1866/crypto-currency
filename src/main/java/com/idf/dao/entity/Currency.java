@@ -17,5 +17,5 @@ public class Currency {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String symbol;
-    private int price;
+    private double price;
 }

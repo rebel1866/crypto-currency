@@ -23,10 +23,16 @@ public class CurrencyRestController {
 
     @GetMapping(produces = {"application/json"})
     public List<CurrencyDto> getCurrencies() {
-       return currencyLogic.findAllCurrencies();
+        return currencyLogic.findAllCurrencies();
     }
+
     @GetMapping(value = "/{id}", produces = {"application/json"})
-    public CurrencyPriceDto getCurrencyById(@PathVariable("id") int id){
+    public CurrencyPriceDto getCurrencyById(@PathVariable("id") int id) {
         return currencyLogic.findCurrencyById(id);
+    }
+
+    @GetMapping(value = "/test", produces = {"application/json"})
+    public List<CurrencyPriceDto> update() {
+        return currencyLogic.updateCurrencyPrices();
     }
 }
