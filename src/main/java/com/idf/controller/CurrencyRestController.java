@@ -25,7 +25,7 @@ public class CurrencyRestController {
     public List<CurrencyDto> getCurrencies() {
        return currencyLogic.findAllCurrencies();
     }
-    @GetMapping(value = "/{id}", consumes = {"application/json"}, produces = {"application/json"})
+    @GetMapping(value = "/{id}", produces = {"application/json"})
     public CurrencyPriceDto getCurrencyById(@PathVariable("id") int id){
         return currencyLogic.findCurrencyById(id);
     }
