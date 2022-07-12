@@ -4,7 +4,7 @@ import com.idf.dao.entity.Currency;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * This interface represents provides database access for Currency entities
+ * This interface provides database access for Currency entities
  *
  * @author Stanislav Melnikov
  * @version 1.0
