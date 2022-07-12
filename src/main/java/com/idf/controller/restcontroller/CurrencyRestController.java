@@ -14,6 +14,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 
+/**
+ * This class encapsulates logic for handling http requests and generate responses using rest
+ * @author Stanislav Melnikov
+ * @version 1.0
+ */
+
 @RestController
 public class CurrencyRestController {
     private CurrencyLogic currencyLogic;

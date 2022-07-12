@@ -30,6 +30,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class represents application logic and implements CurrencyLogic interface
+ * See description of methods in CurrencyLogic interface
+ * @author Stanislav Melnikov
+ * @version 1.0
+ * @see CurrencyLogic
+ */
 @Service
 public class CurrencyLogicImpl implements CurrencyLogic {
 
