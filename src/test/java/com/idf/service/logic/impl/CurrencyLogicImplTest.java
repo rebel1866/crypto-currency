@@ -4,14 +4,11 @@ import com.idf.ServiceLayerTest;
 import com.idf.dao.dbaccess.CurrencyDao;
 import com.idf.dao.entity.Currency;
 import com.idf.service.dto.CurrencyDto;
-import com.idf.service.dtoconverter.CurrencyEntityToDtoConverter;
-import com.idf.service.exception.ServiceException;
 import com.idf.service.logic.CurrencyLogic;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ServiceLayerTest.class)
@@ -76,10 +71,8 @@ class CurrencyLogicImplTest {
         List<Currency> currencies = new ArrayList<>();
         currencies.add(currency);
         Mockito.when(currencyDao.findAll()).thenReturn(currencies);
-        CurrencyLogic mock = Mockito.mock(CurrencyLogic.class);
-        Mockito.when(mock.getRelevantPriceById(1)).thenReturn(3.0);
-        Mockito.when(mock.updateCurrencyPriceById(1, 3.0)).thenReturn(currency);
+        Mockito.when((currencyDao.findById(Mockito.anyInt()))).thenReturn(Optional.of(currency));
         List<CurrencyDto> currencyDtoList = currencyLogic.updateCurrencyPrices();
-        Assertions.assertEquals(2.0, currencyDtoList.get(0).getPrice());
+        Assertions.assertNotEquals(2.0, currencyDtoList.get(0).getPrice());
     }
 }
