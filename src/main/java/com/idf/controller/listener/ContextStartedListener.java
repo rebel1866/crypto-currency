@@ -24,7 +24,6 @@ public class ContextStartedListener implements ApplicationListener<ApplicationSt
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             while (true) {
-                System.out.println("start");
                 currencyLogic.updateCurrencyPrices();
                 System.out.println("updated");
                 TimeUnit.SECONDS.sleep(10);

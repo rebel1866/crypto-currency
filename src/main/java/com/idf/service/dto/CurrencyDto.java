@@ -8,4 +8,5 @@ import lombok.Setter;
 public class CurrencyDto {
     private int id;
     private String symbol;
+    private double price;
 }

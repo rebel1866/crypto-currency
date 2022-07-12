@@ -11,6 +11,7 @@ public class CurrencyEntityToDtoConverter {
         CurrencyDto currencyDto = new CurrencyDto();
         currencyDto.setId(currency.getId());
         currencyDto.setSymbol(currency.getSymbol());
+        currencyDto.setPrice(currency.getPrice());
         return currencyDto;
     }
 

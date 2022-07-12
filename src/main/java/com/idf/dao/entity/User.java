@@ -11,12 +11,13 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "currencies")
-public class Currency {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "currency_id")
-    private int id;
-    private String symbol;
-    private double price;
+    @Column(name = "user_id")
+    private int userId;
+    @Column(name = "user_name")
+    private String userName;
+
 }

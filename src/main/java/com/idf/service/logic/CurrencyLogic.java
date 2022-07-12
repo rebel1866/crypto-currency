@@ -1,7 +1,6 @@
 package com.idf.service.logic;
 
 import com.idf.service.dto.CurrencyDto;
-import com.idf.service.dto.CurrencyPriceDto;
 import com.idf.service.dto.NotifyRequestDto;
 
 import java.util.List;
@@ -9,9 +8,9 @@ import java.util.List;
 public interface CurrencyLogic {
     List<CurrencyDto> findAllCurrencies();
 
-    CurrencyPriceDto findCurrencyById(int id);
+    CurrencyDto findCurrencyById(int id);
 
-    List<CurrencyPriceDto> updateCurrencyPrices();
+    List<CurrencyDto> updateCurrencyPrices();
 
     NotifyRequestDto handleNotifyRequest(NotifyRequestDto notifyRequestDto);
 }

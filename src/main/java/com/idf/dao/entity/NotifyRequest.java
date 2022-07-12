@@ -17,9 +17,13 @@ public class NotifyRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notify_id")
     private int notifyId;
-    private String symbol;
     private double price;
-    @Column(name = "username")
-    private String userName;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "currency_id")
+    private Currency currency;
+
 
 }

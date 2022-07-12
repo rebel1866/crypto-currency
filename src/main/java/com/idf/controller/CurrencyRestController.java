@@ -1,7 +1,6 @@
 package com.idf.controller;
 
 import com.idf.service.dto.CurrencyDto;
-import com.idf.service.dto.CurrencyPriceDto;
 import com.idf.service.dto.NotifyRequestDto;
 import com.idf.service.logic.CurrencyLogic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class CurrencyRestController {
     }
 
     @GetMapping(value = "/currencies/{id}", produces = {"application/json"})
-    public CurrencyPriceDto getCurrencyById(@PathVariable("id") int id) {
+    public CurrencyDto getCurrencyById(@PathVariable("id") int id) {
         return currencyLogic.findCurrencyById(id);
     }
 
