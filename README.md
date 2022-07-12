@@ -7,6 +7,8 @@ one more thread is started to check changes of prices, and log them, if it's mor
 
 -HATEOAS is used for better navigability.
 
+-Mockito is used as testing framework for service layer.
+
 -Code is documented with javadoc.
 
 -All data passed in "notify" method (username and etc.) is validated with the help of Hibernate Validator.
@@ -18,6 +20,8 @@ one more thread is started to check changes of prices, and log them, if it's mor
 -Lombok is used in entities and dto classes.
 
 -Database scheme and screenshot of diagram are attached.
+
+-Layered architecture is used in application.
 
 -Dto object are used for passing data from controller to service and vice versa. Data between service and dao layer
 passed through entity classes. Custom dto to entity and entity to dto converters are implemented.
