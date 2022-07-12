@@ -36,6 +36,7 @@ public class CurrencyLogicImpl implements CurrencyLogic {
     private CurrencyDao currencyDao;
     private NotifyDao notifyDao;
     private static final String API_URL = "https://api.coinlore.net/api/ticker/?id=";
+    private static final double PERCENT_THRESHOLD = 1.0;
 
 
     @Autowired
@@ -133,7 +134,7 @@ public class CurrencyLogicImpl implements CurrencyLogic {
         String userName = notifyRequest.getUser().getUserName();
         double difference = initialPrice - currentPrice;
         double percents = (Math.abs(difference / initialPrice)) * 100;
-        if (percents > 1.0) {
+        if (percents > PERCENT_THRESHOLD) {
             String message = String.format("Info for user %s - price for %s currency has changed for %s percents",
                     userName, symbol, percents);
             logger.warn(message);
