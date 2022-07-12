@@ -4,7 +4,13 @@ import com.idf.service.dto.CurrencyDto;
 import com.idf.service.dto.NotifyRequestDto;
 import com.idf.service.logic.CurrencyLogic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 
@@ -16,9 +22,15 @@ public class CurrencyRestController {
     public void setCurrencyLogic(CurrencyLogic currencyLogic) {
         this.currencyLogic = currencyLogic;
     }
+
     @GetMapping(value = "/currencies", produces = {"application/json"})
     public List<CurrencyDto> getCurrencies() {
-        return currencyLogic.findAllCurrencies();
+        List<CurrencyDto> currencyDtoList = currencyLogic.findAllCurrencies();
+        currencyDtoList.forEach((currencyDto) -> {
+            Link priceLink = linkTo(methodOn(CurrencyRestController.class).getCurrencyById(currencyDto.getId())).withRel("price");
+            currencyDto.add(priceLink);
+        });
+        return currencyDtoList;
     }
 
     @GetMapping(value = "/currencies/{id}", produces = {"application/json"})
@@ -27,7 +39,7 @@ public class CurrencyRestController {
     }
 
     @PostMapping(value = "/notify")
-    public NotifyRequestDto notifyMe(@RequestBody NotifyRequestDto notifyRequestDto) {
+    public NotifyRequestDto notifyMe(@RequestBody @Valid NotifyRequestDto notifyRequestDto) {
         return currencyLogic.handleNotifyRequest(notifyRequestDto);
     }
 }
