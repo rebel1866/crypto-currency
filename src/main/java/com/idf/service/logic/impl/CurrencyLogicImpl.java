@@ -12,11 +12,14 @@ import com.idf.service.dto.NotifyRequestDto;
 import com.idf.service.dtoconverter.CurrencyEntityToDtoConverter;
 import com.idf.service.dtoconverter.NotifyDtoToEntityConverter;
 import com.idf.service.dtoconverter.NotifyEntityToDtoConverter;
+import com.idf.service.exception.ServiceException;
 import com.idf.service.logic.CurrencyLogic;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,7 @@ public class CurrencyLogicImpl implements CurrencyLogic {
 
     private CurrencyDao currencyDao;
     private NotifyDao notifyDao;
+    private static final String API_URL = "https://api.coinlore.net/api/ticker/?id=";
 
 
     @Autowired
@@ -52,13 +56,15 @@ public class CurrencyLogicImpl implements CurrencyLogic {
 
     @Override
     public CurrencyDto findCurrencyById(int id) {
-        Currency currency = currencyDao.findById(id).get();
+        Currency currency = currencyDao.findById(id).
+                orElseThrow(() -> new ServiceException("No currency found by given id: " + id));
         return CurrencyEntityToDtoConverter.convert(currency);
     }
 
     @Transactional
     public Currency updateCurrencyPriceById(int id, double price) {
-        Currency currency = currencyDao.findById(id).get();
+        Currency currency = currencyDao.findById(id).
+                orElseThrow(() -> new ServiceException("Can't update currency by given id - nothing found with id: " + id));
         currency.setPrice(price);
         return currency;
     }
@@ -66,36 +72,17 @@ public class CurrencyLogicImpl implements CurrencyLogic {
     @Override
     @Transactional
     public List<CurrencyDto> updateCurrencyPrices() {
+        Logger logger = LogManager.getLogger(CurrencyLogicImpl.class);
         List<Currency> currencies = currencyDao.findAll();
         List<Currency> updatedCurrencies = currencies.stream().map(value -> {
             try {
                 return updateCurrencyPriceById(value.getId(), getRelevantPriceById(value.getId()));
-            } catch (Exception e) {
-                System.out.println("caught");
+            } catch (ServiceException e) {
+                logger.error(e.getMessage());
                 return new Currency();
             }
         }).toList();
         return CurrencyEntityToDtoConverter.convertList(updatedCurrencies);
-    }
-
-    public double getRelevantPriceById(int id) throws Exception {
-        String json;
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet request = new HttpGet("https://api.coinlore.net/api/ticker/?id=" + id);
-            json = client.execute(request, httpResponse -> EntityUtils.toString(httpResponse.getEntity()));
-            if (json.equals("")) {
-                throw new Exception();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        JsonNode parent;
-        try {
-            parent = new ObjectMapper().readTree(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return parent.get(0).get("price_usd").asDouble();
     }
 
     @Override
@@ -109,20 +96,47 @@ public class CurrencyLogicImpl implements CurrencyLogic {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             while (true) {
-                TimeUnit.SECONDS.sleep(12);
+                TimeUnit.MINUTES.sleep(2);
                 checkPriceChange(notifyRequestAdded);
             }
         });
         return NotifyEntityToDtoConverter.convert(notifyRequestAdded);
     }
 
-    private void checkPriceChange(NotifyRequest notifyRequest) {
-        double initialPrice = notifyRequest.getPrice();
+    public double getRelevantPriceById(int id) throws ServiceException {
+        String json;
+        JsonNode parent;
+        String targetField = "price_usd";
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet request = new HttpGet(API_URL + id);
+            json = client.execute(request, httpResponse -> EntityUtils.toString(httpResponse.getEntity()));
+            if (json.equals("")) {
+                throw new ServiceException("Exception is caught - can not update currency using coinlore api");
+            }
+            parent = new ObjectMapper().readTree(json);
+        } catch (JsonProcessingException e) {
+            throw new ServiceException("Coinlore api response can not be parsed");
+        } catch (IOException e) {
+            throw new ServiceException("Exception while trying to make coinlore api http request");
+        }
+        JsonNode firstNode = parent.get(0);
+        return firstNode.get(targetField).asDouble();
+    }
+
+    public void checkPriceChange(NotifyRequest notifyRequest) {
+        Logger logger = LogManager.getLogger(CurrencyLogicImpl.class);
         int currencyId = notifyRequest.getCurrency().getId();
-        double currentPrice = currencyDao.findById(currencyId).orElseThrow(() -> new RuntimeException("as")).getPrice();
-        System.out.println("initial: " + initialPrice);
-        System.out.println("current (db): " + currentPrice);
-        System.out.println("symbol: " + notifyRequest.getCurrency().getSymbol());
-        System.out.println("user name: " + notifyRequest.getUser().getUserName());
+        double initialPrice = notifyRequest.getPrice();
+        double currentPrice = currencyDao.findById(currencyId).
+                orElseThrow(() -> new ServiceException("No currency found")).getPrice();
+        String symbol = notifyRequest.getCurrency().getSymbol();
+        String userName = notifyRequest.getUser().getUserName();
+        double difference = initialPrice - currentPrice;
+        double percents = (Math.abs(difference / initialPrice)) * 100;
+        if (percents > 1.0) {
+            String message = String.format("Info for user %s - price for %s currency has changed for %s percents",
+                    userName, symbol, percents);
+            logger.warn(message);
+        }
     }
 }

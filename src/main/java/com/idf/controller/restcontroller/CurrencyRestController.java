@@ -1,4 +1,4 @@
-package com.idf.controller;
+package com.idf.controller.restcontroller;
 
 import com.idf.service.dto.CurrencyDto;
 import com.idf.service.dto.NotifyRequestDto;
@@ -16,7 +16,6 @@ public class CurrencyRestController {
     public void setCurrencyLogic(CurrencyLogic currencyLogic) {
         this.currencyLogic = currencyLogic;
     }
-
     @GetMapping(value = "/currencies", produces = {"application/json"})
     public List<CurrencyDto> getCurrencies() {
         return currencyLogic.findAllCurrencies();

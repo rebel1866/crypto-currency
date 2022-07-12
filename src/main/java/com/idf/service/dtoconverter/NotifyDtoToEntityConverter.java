@@ -1,6 +1,5 @@
 package com.idf.service.dtoconverter;
 
-import com.idf.dao.entity.Currency;
 import com.idf.dao.entity.NotifyRequest;
 import com.idf.dao.entity.User;
 import com.idf.service.dto.NotifyRequestDto;

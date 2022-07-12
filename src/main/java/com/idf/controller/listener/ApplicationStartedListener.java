@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class ContextStartedListener implements ApplicationListener<ApplicationStartedEvent> {
+public class ApplicationStartedListener implements ApplicationListener<ApplicationStartedEvent> {
     private CurrencyLogic currencyLogic;
 
     @Autowired
@@ -25,8 +25,7 @@ public class ContextStartedListener implements ApplicationListener<ApplicationSt
         executorService.submit(() -> {
             while (true) {
                 currencyLogic.updateCurrencyPrices();
-                System.out.println("updated");
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.MINUTES.sleep(1);
             }
         });
     }
