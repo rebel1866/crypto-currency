@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * This class represents application logic and implements CurrencyLogic interface
  * See description of methods in CurrencyLogic interface
+ *
  * @author Stanislav Melnikov
  * @version 1.0
  * @see CurrencyLogic
@@ -70,6 +71,7 @@ public class CurrencyLogicImpl implements CurrencyLogic {
     }
 
     @Transactional
+    @Override
     public Currency updateCurrencyPriceById(int id, double price) {
         Currency currency = currencyDao.findById(id).
                 orElseThrow(() -> new ServiceException("Can't update currency by given id - nothing found with id: " + id));
@@ -111,6 +113,7 @@ public class CurrencyLogicImpl implements CurrencyLogic {
         return NotifyEntityToDtoConverter.convert(notifyRequestAdded);
     }
 
+    @Override
     public double getRelevantPriceById(int id) throws ServiceException {
         String json;
         JsonNode parent;

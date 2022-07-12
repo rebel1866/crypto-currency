@@ -1,7 +1,10 @@
 package com.idf.service.logic;
 
+import com.idf.dao.entity.Currency;
 import com.idf.service.dto.CurrencyDto;
 import com.idf.service.dto.NotifyRequestDto;
+import com.idf.service.exception.ServiceException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 /**
@@ -23,6 +26,10 @@ public interface CurrencyLogic {
      * @return CurrencyDto object
      */
     CurrencyDto findCurrencyById(int id);
+
+    @Transactional
+    Currency updateCurrencyPriceById(int id, double price);
+
     /**
      * update currencies according to relevant prices
      * @param
@@ -36,4 +43,6 @@ public interface CurrencyLogic {
      * @return NotifyRequestDto object
      */
     NotifyRequestDto handleNotifyRequest(NotifyRequestDto notifyRequestDto);
+
+    double getRelevantPriceById(int id) throws ServiceException;
 }
