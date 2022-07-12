@@ -25,4 +25,10 @@ public class JsonCurrencyDaoImpl implements JsonCurrencyDao {
         }
         return currencyList;
     }
+
+    @Override
+    public int findCurrencyIdBySymbol(String symbol) {
+        List<Currency> currencies = findAllCurrencies();
+        return currencies.stream().filter(value->value.getSymbol().equals(symbol)).findFirst().get().getId();
+    }
 }

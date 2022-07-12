@@ -23,10 +23,11 @@ public class ContextStartedListener implements ApplicationListener<ApplicationSt
     public void onApplicationEvent(ApplicationStartedEvent event) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
-            for (; ; ) {
+            while (true) {
+                System.out.println("start");
                 currencyLogic.updateCurrencyPrices();
                 System.out.println("updated");
-                TimeUnit.MINUTES.sleep(1);
+                TimeUnit.SECONDS.sleep(10);
             }
         });
     }

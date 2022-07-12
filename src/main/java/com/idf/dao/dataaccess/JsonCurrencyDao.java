@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface JsonCurrencyDao {
     List<Currency> findAllCurrencies();
+
+    int findCurrencyIdBySymbol(String symbol);
 }
